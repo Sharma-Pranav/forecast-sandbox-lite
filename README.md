@@ -3,9 +3,24 @@
 
 # **Forecast Sandbox Lite — FreshNet Edition**
 
-A reproducible sandbox for evaluating forecasting models on **fresh-retail SKU demand**, using a **bias-aware stability metric** and selecting the most deployable model per SKU.
+A reproducible sandbox for evaluating forecasting models on **fresh-retail SKU demand**, using a **bias-aware stability metric** and selecting a **structure-aligned, deployable model per SKU**.
 
 Built on the **FreshRetailNet-50K** dataset — a large-scale, multi-store fresh retail forecasting corpus.
+
+---
+
+## **Primary Narrative**
+
+The executive-level conclusions of this repository are presented in:
+
+* **Executive_brief.md**
+
+Supporting materials:
+
+* **Technical_brief.md** — methodology and execution details
+* **Appendix.md** — full quantitative evidence
+
+All figures and conclusions are reproducible from the analysis and metrics folders.
 
 ---
 
@@ -23,13 +38,13 @@ This sandbox uses the public dataset:
 * 50,000+ fresh SKU time series
 * full product hierarchy: city → store → category → SKU
 * sales, stockout hours, discount, promotion, temperature, precipitation, humidity, wind
-* highly intermittent + volatile patterns typical of fresh operations
-* multiple behavioral regimes (smooth, erratic, intermittent, lumpy)
+* highly intermittent and volatile patterns typical of fresh operations
+* multiple behavioral structures (smooth, erratic, intermittent, lumpy)
 
 ### **How This Dataset Is Used in the Sandbox**
 
 * A **stratified SKU subset** was sampled to preserve the **original ADI–CV² distribution**.
-* Each sampled SKU retains **full historical trajectory**.
+* Each sampled SKU retains its **full historical trajectory**.
 * **Sales values were scaled ×100** to remove decimal-range noise (e.g., 0.1 → 10).
 * No raw dataset files are redistributed — only processed evaluation inputs.
 
@@ -42,17 +57,17 @@ Users must download the dataset directly from Hugging Face.
 
 This repository includes:
 
-* classical models (SES, Holt, Holt-Winters, Theta)
-* intermittent models (Croston variants)
-* moving average baselines
-* global ML model (LightGBM)
-* **Chronos2 — foundation-model forecasting from Amazon**
+* classical smoothing models (SES, Holt, Holt-Winters, Theta)
+* intermittent-demand models (Croston variants)
+* moving-average baselines
+* a global ML baseline (LightGBM)
+* **Chronos2 — a foundation-model forecasting baseline**
 
 Outputs include:
 
 * SKU-wise metrics ledger
-* complete model selection audit
-* forecasts for all models
+* complete model-selection audit
+* forecasts for all evaluated models
 * Streamlit dashboard for exploration
 
 This is not a model zoo; it is a **governance-driven forecasting pipeline**.
@@ -65,35 +80,42 @@ This is not a model zoo; it is a **governance-driven forecasting pipeline**.
 Score = MAE + |Bias|
 ```
 
-This metric penalizes unstable or directionally-wrong forecasts — a major cost driver in fresh retail.
+This metric penalizes unstable or directionally misaligned forecasts — a major operational cost driver in fresh retail.
 
 ---
 
 ## **Key Findings (FreshNet v1.0)**
 
-### **1. Forecasting is regime-dependent.**
+### **1. Forecast performance is structure-conditional.**
 
-Different models dominate different ADI–CV² regimes.
+Different models perform better under different ADI–CV² demand structures.
 
-### **2. Stability-first models win:**
+---
 
-Top performers across FreshRetailNet-50K:
+### **2. Stability-oriented models perform best when aligned to structure.**
+
+Across the evaluated FreshRetailNet subset, the following models consistently produced low-noise signals **when applied in appropriate regimes**:
 
 * **DynamicOptimizedTheta**
 * **SES / Holt / Holt-Winters**
 * **SeasonalExpSmoothingOptimized**
 * **Croston variants (SBA / Classic)**
-* **Chronos2** — robust across mixed demand patterns
-* LightGBM (only improves with covariates)
+* **Chronos2** — robust under mixed or uncertain demand structure
 
-### **3. Foundation model (Chronos2) behaves correctly**
+LightGBM improves only when meaningful covariates are included.
 
-Strong across varied noise profiles, especially where continuity exists.
+---
 
-### **4. ML without drivers is expected to underperform**
+### **3. Foundation model (Chronos2) behaves as a structure-agnostic baseline.**
+
+Chronos2 performs consistently across varied noise profiles, particularly where demand exhibits mixed patterns and regime certainty is low.
+
+---
+
+### **4. ML without drivers underperforms by design.**
 
 FreshRetailNet-50K includes rich covariates (discount, weather, stockout signals).
-When these are withheld by design, LightGBM produces minimal structure — correctly.
+When these drivers are withheld by design, LightGBM produces unstable forecasts — an expected outcome rather than a deficiency.
 
 ---
 
@@ -103,7 +125,7 @@ When these are withheld by design, LightGBM produces minimal structure — corre
 /app                     → Streamlit UI
 /data/processed          → subset + scaled FreshRetailNet-50K data
 /metrics                 → forecasts, metrics, audit logs
-/models                  → classical + Chronos2 wrappers
+/models                  → classical models + Chronos2 wrappers
 /utils                   → helpers
 run_pipeline.py          → orchestrates the full pipeline
 ```
@@ -112,7 +134,7 @@ run_pipeline.py          → orchestrates the full pipeline
 
 ## **How to Run**
 
-### Pipeline:
+### Pipeline
 
 ```bash
 python run_pipeline.py
@@ -127,7 +149,7 @@ metrics/
     model_selection_audit.csv
 ```
 
-### Dashboard:
+### Dashboard
 
 ```bash
 streamlit run app/app.py
@@ -138,14 +160,14 @@ streamlit run app/app.py
 ## **Why Stability Matters in Fresh Retail**
 
 Volatile daily demand causes frequent directional shifts.
-Every shift forces:
+Each shift forces:
 
 * replanning
 * overrides
 * waste corrections
 * order rebalancing
 
-A stable forecast reduces resets and increases decision velocity.
+A stable, structure-aligned forecast reduces resets and increases decision velocity.
 
 ---
 
@@ -155,7 +177,7 @@ Works on:
 
 * **Hugging Face Spaces**
 * **Docker**
-* Local Streamlit execution
+* local Streamlit execution
 
 Fully self-contained.
 
@@ -165,13 +187,15 @@ Fully self-contained.
 
 This sandbox delivers:
 
-1. a **stable, SKU-specific recommended model**
-2. a **bias-aware, regime-informed evaluation**
-3. a **comprehensive audit log**
+1. a **structure-aligned, SKU-specific recommended model**
+2. a **bias-aware, regime-informed evaluation framework**
+3. a **comprehensive model-selection audit log**
 4. foundation-model benchmarking via **Chronos2**
-5. a reproducible operational forecasting pipeline
+5. a reproducible, governance-ready forecasting pipeline
 
-Forecasting becomes **explainable, defendable, and operationally aligned** — one SKU at a time.
+
+> **If a single forecasting model must be deployed across all SKUs due to operational or governance constraints, Chronos2 is the most appropriate default choice.**
+> It provides consistent, bounded performance across heterogeneous demand structures and avoids the collapse modes observed when specialist models are misapplied.
 
 ---
 
@@ -180,3 +204,4 @@ Forecasting becomes **explainable, defendable, and operationally aligned** — o
 **FreshNet Release — v1.0 (December 2025)**
 
 ---
+

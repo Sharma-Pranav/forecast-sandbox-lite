@@ -1,7 +1,3 @@
-Below is the **final Executive Brief**, now **fully integrated with your executive-grade plot**.
-The plot is inserted exactly where an executive expects it, with a clean, high-signal caption and narrative bridge.
-
-You can paste this directly into a PDF or slide.
 
 ---
 
@@ -36,8 +32,8 @@ This analysis was designed to answer a practical question:
 
 ## **What the Evaluation Showed (FreshNet Context)**
 
-FreshNet SKUs revealed a **clear hierarchy** in forecasting stability.
-Some models consistently dampened noise; others amplified it.
+FreshNet SKUs revealed **structure-dependent differences** in forecasting stability.
+Some models consistently dampened noise within specific demand behaviors; others amplified it when misapplied.
 
 ---
 
@@ -49,9 +45,11 @@ Some models consistently dampened noise; others amplified it.
 
 This plot shows:
 
-* **Blue models** → consistently stable signal
+* **Blue models** → consistently stable signal across many SKUs
 * **Gray models** → acceptable for some SKUs, not ideal for volatile items
 * **Red models** → produce unstable week-to-week swings, creating rework
+
+*Observed stability varies by demand structure; no single model dominates all SKU behaviors.*
 
 The stability threshold highlights where noise becomes operationally disruptive.
 
@@ -61,14 +59,14 @@ The stability threshold highlights where noise becomes operationally disruptive.
 
 ### **1. A small group of models produced the most stable, low-bias signal**
 
-These methods consistently absorbed volatility without overreacting:
+These methods consistently absorbed volatility without overreacting **when applied in the appropriate demand context**:
 
 * **Theta-family smoothing**
 * **SES / Holt / Holt-Winters (exponential smoothing)**
-* **Chronos2** for mixed patterns
+* **Chronos2** for mixed or uncertain demand patterns
 * **Croston variants** for intermittent and zero-heavy SKUs
 
-These models form the **recommended baseline** for fresh forecasting.
+These models form the **recommended baseline for fresh forecasting when applied in a structure-aware manner**.
 
 ---
 
@@ -103,7 +101,7 @@ Without these drivers, ML becomes unstable — validating the need for **model-t
 
 > **Use smoothing-based models (Theta/SES/Holt) as the default signal for FreshNet SKUs.
 > Use Croston-type methods for intermittent items.
-> Use Chronos2 when SKUs show variability combined with trend or soft seasonality.**
+> Use Chronos2 when SKUs show mixed or uncertain structure involving variability, trend, or soft seasonality.**
 
 This approach:
 
@@ -113,6 +111,8 @@ This approach:
 * provides planners with a reliable directional signal
 
 Exactly what fresh operations require.
+
+> *Where operational simplicity requires a single global model, Chronos2 provides the most robust default across mixed and uncertain demand structures.*
 
 ---
 
@@ -141,16 +141,6 @@ True demand shifts stand out clearly because baseline noise is lower.
 ## **Leadership Takeaway**
 
 **Stable forecasts create stable fresh-retail operations.
-The recommended models deliver the most reliable, low-noise baseline for FreshNet —
-supporting stronger ordering discipline, lower waste, and more confident execution.**
+When forecasting models are selected with awareness of demand structure, the resulting signal supports stronger ordering discipline, lower waste, and more confident execution.**
 
 ---
-
-If you want, I can now produce:
-
-* a **PDF-ready 1-pager**
-* a **slide version using your executive theme**
-* a **technical appendix** (metrics, regimes, diagnostics)
-* a version written specifically for **CFO**, **COO**, or **Planning Directors**
-
-Tell me which format you want next.

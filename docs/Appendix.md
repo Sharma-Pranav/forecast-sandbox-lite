@@ -16,9 +16,9 @@ Score = MAE + |Bias|
 This penalizes models that appear accurate but drift directionally—
 a critical failure mode in fresh categories where bias inflates waste or drives stockouts.
 
-### **Observed portfolio stability hierarchy (↓ = more stable)**
+### **Observed portfolio stability patterns (↓ = more stable)**
 
-**Tier A — Stable Forecast Models**
+**Tier A — Lower-Noise Forecast Models**
 
 | Model Family                            | Mean Stability Score (↓ better) |
 | --------------------------------------- | ------------------------------- |
@@ -49,12 +49,12 @@ a critical failure mode in fresh categories where bias inflates waste or drives 
 
 ### **Interpretation**
 
-* Tier-A models produce **directionally stable**, low-noise forecasts.
+* Tier-A models produce **lower bias and reduced noise** at the portfolio level.
 * ML (LightGBM), without drivers such as discount, weather, or stockout hours, becomes **unstable**, overreacting to recent noise.
 * Naive and drift models exaggerate noise and create planning churn.
 
 **Conclusion:**
-FreshNet dynamics reward smoothing, not signal chasing.
+FreshNet dynamics favor **noise-dampening methods over signal chasing**, particularly when demand structure is heterogeneous.
 
 ---
 
@@ -71,17 +71,17 @@ Winner share across all evaluated SKUs:
 ### **Interpretation**
 
 * Winners did **not** cluster around ML models.
-* The distribution is **not symmetric**—smoothing models dominate across regimes.
-* LightGBM only wins where behavior is quasi-linear *and* no external drivers are needed.
+* The distribution is **skewed toward smoothing-based approaches**, particularly in volatile and intermittent SKUs.
+* LightGBM wins primarily where behavior is quasi-linear **and** no external drivers are required.
 
-This is consistent with **fresh demand physics**, not algorithmic preference.
+These patterns reflect **model–structure alignment**, not algorithmic preference.
 
 ---
 
 ## **C. Behavioral Regime Analysis**
 
 FreshNet SKUs were segmented into three behavioral regimes.
-Below are the stability winners.
+Below are **frequently observed stability winners** within each regime.
 
 ---
 
@@ -96,13 +96,13 @@ Below are the stability winners.
 | **Chronos2**                                       |
 | Croston variants (for sparse high-volatility SKUs) |
 
-**Why they win**
+**Observed behavior**
 
-* They smooth volatility without flattening structure.
+* These models dampen volatility without flattening structure.
 * They avoid overreacting after spikes.
-* Chronos2 handles mixed signal patterns without oscillation.
+* Chronos2 handles mixed signal patterns without strong oscillation.
 
-LightGBM heavily overfit recent bursts → poor forward stability.
+LightGBM frequently overfit recent bursts, leading to poor forward stability.
 
 ---
 
@@ -117,11 +117,11 @@ LightGBM heavily overfit recent bursts → poor forward stability.
 | **Chronos2**     |
 | Croston variants |
 
-**Interpretation**
+**Observed behavior**
 
-* Seasonal consistency explains Holt-Winters success.
-* Amplitude spikes are handled by smoothing models, not ML.
-* Chronos2 adapts without resetting level after shocks.
+* Seasonal regularity supports Holt-Winters performance.
+* Amplitude spikes are absorbed more effectively by smoothing models than ML.
+* Chronos2 adapts without repeatedly resetting level after shocks.
 
 ---
 
@@ -135,11 +135,11 @@ LightGBM heavily overfit recent bursts → poor forward stability.
 | Historic Average (some SKUs) |
 | Croston (intermittent)       |
 
-**Interpretation**
+**Observed behavior**
 
-* Model choice matters least here.
-* Smoothing models converge to the correct baseline.
-* Chronos2 is neutral—not worse, not necessary.
+* Model choice has lower impact in this regime.
+* Smoothing models converge to similar baselines.
+* Chronos2 is neutral — neither dominant nor harmful.
 
 ---
 
@@ -169,50 +169,51 @@ Purpose:
 
 The evidence demonstrates that:
 
-* Theta/SES models **minimize drift**, the critical failure mode.
-* Chronos2 handles complex structure without overreacting.
+* Theta/SES models **reduce directional drift**, a critical failure mode.
+* Chronos2 accommodates mixed structure without aggressive overreaction.
 * Croston preserves stability for zero-heavy SKUs.
 * LightGBM is unsuitable for fresh categories **without driver data**.
 
-### Stability, not complexity, is the determinant.
+### Stability, when matched to structure, dominates complexity
 
 ---
 
 ## **Operationally**
 
-A stable anchor model eliminates:
+A stable, structure-aligned anchor model reduces:
 
 * excessive overrides
-* store-planner misalignment
+* store–planner misalignment
 * week-to-week forecast resets
 * spiraling exception handling
 
 And enables:
 
 * consistent ordering
-* predictable labor/waste planning
-* clean exception signals
+* predictable labor and waste planning
+* cleaner exception signals
 
 ---
 
 ## **Economically**
 
-Stable models reduce:
+Structure-aligned stability reduces:
 
 * re-forecasting cycles
 * waste from positive bias
 * stockouts from negative bias
 * planning churn and meeting load
 
-These are real cost centers in fresh operations.
+These are material cost centers in fresh operations.
 
 ---
 
 # **Deployment Decision**
 
-> **Theta-family smoothing + SES/Holt + Chronos2 = the canonical fresh-forecasting ensemble.**
-> **Croston methods = the anchor for intermittent SKUs.**
-> **LightGBM = only used once driver data (discounts, stockout hours, weather) is integrated.**
+> **Use Theta-family smoothing and SES/Holt as the default signal where structure is stable.**
+> **Use Croston methods for intermittent SKUs.**
+> **Use Chronos2 when demand structure is mixed or uncertain.**
+> **Introduce LightGBM only once driver data (discounts, stockout hours, weather) is integrated.**
 
 Fallbacks are allowed **only** when:
 
@@ -227,15 +228,13 @@ All fallback choices must be recorded in the model selection ledger.
 
 # **Closing Position**
 
-This evidence does not indicate small differences—it shows a **structural hierarchy**.
+This evidence shows **consistent, structure-conditional patterns**, not a single universally dominant model.
 
-**Theta/SES/Croston/Chronos2 are not slightly better—
-they are the only models that remain operationally stable across FreshNet’s volatile, mixed-pattern, and intermittent regimes.**
+**Theta/SES, Croston, and Chronos2 remain operationally stable across FreshNet’s volatile, mixed-pattern, and intermittent regimes when applied appropriately.**
 
-They produce a forecast that is not only “accurate,”
-but **steady enough to drive durable planning decisions**.
+They produce forecasts that are not only accurate,
+but **steady enough to support durable planning decisions**.
 
-That is why they form the anchor set for FreshNet forecasting.
+That is why they form the **anchor set for FreshNet forecasting**, under a regime-aware deployment standard.
 
 ---
-

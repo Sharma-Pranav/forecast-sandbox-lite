@@ -32,15 +32,16 @@ import sys
 from datetime import datetime
 
 STEPS = [
-    # ("Prepare FreshNet-50K-derived train/test data", ["python", "-m", "data.prepare_data_freshnet"]),
-    # ("Prepare LightGBM training dataset", ["python", "-m", "data.prepare_data_lgbm_fresh"]),
-    # ("Compute statistical baselines", ["python", "-m", "models.compute_baselines"]),
-    # ("Train LightGBM model", ["python", "-m", "models.lgbm_modeling"]),
+    ("Prepare FreshNet-50K-derived train/test data", ["python", "-m", "data.prepare_data_freshnet"]),
+    ("Prepare LightGBM training dataset", ["python", "-m", "data.prepare_data_lgbm_fresh"]),
+    ("Compute statistical baselines", ["python", "-m", "models.compute_baselines"]),
+    ("Train LightGBM model", ["python", "-m", "models.lgbm_modeling"]),
     ("Inference on Chronos2 model", ["python", "-m", "models.chronos_inference"]),
     ("Combine metrics", ["python", "-m", "models.combine_metrics"]),
     ("Select best model per SKU", ["python", "-m", "models.select_best_models"]),
     ("Generate first insights & plots", ["python", "-m", "models.generate_first_insights"]),
     ("Create model selection audit ledger", ["python", "-m", "models.model_selection_audit"]),
+    ("Regime-conditioned forecasting analysis", ["python", "-m", "models.analysis_regime_conditioned_forecasting"])
 ]
 
 
@@ -67,8 +68,8 @@ def main() -> None:
     print("  - metrics/combined_metrics.csv")
     print("  - metrics/best_by_sku.csv")
     print("  - metrics/model_selection_audit.csv")
-    print("  - insights/model_score_ranking.png")
-    print("  - insights/regime_model_performance.csv")
+    print("  - docs/model_score_ranking.png")
+    print("  - docs/regime_model_performance.csv")
 
 
 if __name__ == "__main__":

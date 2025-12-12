@@ -44,7 +44,7 @@ A behavioral segmentation was created:
 | Low-High  | regular timing + high variability       |
 | Low-Low   | stable, low-variance items              |
 
-The purpose of segmentation is not accuracy benchmarking but **stability differentiation** under heterogeneous behaviors.
+The purpose of segmentation is **not accuracy benchmarking**, but **stability differentiation under heterogeneous demand behaviors**.
 
 ---
 
@@ -102,29 +102,28 @@ In fresh categories, bias is critical because:
 
 Two models with identical MAE may have **very different operational impact** if one produces drift and the other does not.
 
-This scoring function explicitly enforces **directional stability**.
+This scoring function explicitly enforces **directional stability**, rather than point accuracy alone.
 
 ---
 
 ## **5. Technical Findings (FreshNet)**
 
-The portfolio-level ranking (lower = more stable) shows a clear hierarchy:
+The portfolio-level ranking (lower = more stable) shows **structure-dependent differences** in model stability:
 
-| Stability Tier                           | Model Families (ranked best → worst)                                              |
+| Stability Tier                           | Model Families (representative, not universal)                                    |
 | ---------------------------------------- | --------------------------------------------------------------------------------- |
 | **Tier A — Stable Models**               | *DynamicOptimizedTheta, SES/Holt/Holt-Winters, Chronos2, Theta, Croston variants* |
 | **Tier B — Acceptable Secondary Models** | *WindowAverage, HistoricAverage*                                                  |
 | **Tier C — High-Noise Models (avoid)**   | *LightGBM (without drivers), Naive, Drift, RandomWalk*                            |
 
-### Key outcomes:
+### Key outcomes
 
-* **Smoothing-based models** consistently produced the most stable forecasts.
-* **Chronos2** performed strongly across mixed or noisy SKU profiles.
-* **Croston variants** excelled in zero-heavy SKUs.
+* **Smoothing-based models** produced the most stable forecasts **when aligned with appropriate demand regimes**.
+* **Chronos2** performed consistently across SKUs exhibiting mixed or uncertain structure.
+* **Croston variants** excelled in zero-heavy and intermittent demand profiles.
 * **LightGBM**, without drivers such as discount, weather, and availability, became unstable in fresh environments.
 
-This finding aligns directly with fresh-category physics:
-**signal smoothing outperforms signal chasing**.
+These outcomes reflect **model–structure alignment**, not algorithmic superiority.
 
 ---
 
@@ -134,21 +133,21 @@ This finding aligns directly with fresh-category physics:
 
 From the plot:
 
-* **Tier-A models** (left cluster) maintain a **stable slope**, **low bias**, and **consistent weekly direction**.
+* **Tier-A models** (left cluster) generally maintain **lower bias** and **more consistent weekly direction**, conditional on demand structure.
 * **Tier-B models** are usable but may oscillate under moderate volatility.
 * **Tier-C models** amplify noise and introduce unnecessary churn.
 
-### Why smoothing wins in FreshNet:
+### Why smoothing dominates in FreshNet
 
-* fresh demand is noisy; smoothing reduces false volatility
-* Theta/SES capture level shifts without reacting to every spike
-* Croston handles sparse and intermittent signals correctly
-* Chronos2 handles mixed structure without overshooting
+* fresh demand is inherently noisy; smoothing dampens false volatility
+* Theta/SES capture level shifts without reacting to transient spikes
+* Croston preserves stability in sparse and intermittent series
+* Chronos2 adapts to mixed structure without aggressive overshooting
 * ML methods require external drivers; without them, they overfit recent noise
 
 In short:
 
-> **Fresh demand rewards stability, not complexity.**
+> **Fresh demand rewards structure-aware stability, not raw complexity.**
 
 ---
 
@@ -156,18 +155,18 @@ In short:
 
 Based on FreshNet performance:
 
-> **Adopt Theta/SES/Holt-Winters as the default forecasting signal across FreshNet SKUs.**
+> **Adopt Theta/SES/Holt-Winters as the default forecasting signal for SKUs with stable or moderately volatile structure.**
 > **Use Croston variants for intermittent SKUs.**
-> **Use Chronos2 for variable SKUs with mixed seasonal or trend structure.**
+> **Use Chronos2 when demand structure is mixed, uncertain, or weakly seasonal.**
 
 ML (LightGBM) becomes a **Phase-2 upgrade** once driver data is introduced:
-discount, stockout hours, weather, and availability ratios.
+discounts, stockout hours, weather, and availability ratios.
 
 ---
 
 ## **8. What This Resolves for Planning Teams**
 
-A stable forecast signal resolves several persistent operational issues:
+A stable, structure-aligned forecast signal resolves several persistent operational issues:
 
 ### Before
 
@@ -194,7 +193,7 @@ The system is technically defensible because:
 * evaluation is performed **per SKU**, not at the portfolio mean
 * stability scoring is **mathematically transparent**
 * all steps are deterministic, auditable, and logged
-* model selection follows **explicit rules**, not subjective preference
+* model selection follows **explicit, structure-aware rules**
 * the plot provides **visual governance evidence**
 
 This creates a **repeatable, explainable, non-heuristic** model-selection framework.
@@ -205,13 +204,12 @@ This creates a **repeatable, explainable, non-heuristic** model-selection framew
 
 Forecast Sandbox v1.0 is not a model shootout.
 
-It is a **decision pipeline** engineered to identify forecasting methods that produce a **stable, low-noise signal**,
+It is a **decision pipeline** engineered to identify forecasting methods that produce a **stable, low-noise signal when matched to demand structure**,
 because stability—not marginal accuracy—determines operational reliability in fresh retail.
 
-By anchoring on smoothing models (Theta/SES/Holt) and augmenting with Croston and Chronos2 where needed,
+By anchoring on smoothing models (Theta/SES/Holt), augmenting with Croston for intermittency, and using Chronos2 when structure is uncertain,
 the resulting forecast becomes not only accurate but **operationally trustworthy**.
 
 **This stability is what reduces waste, improves store ordering, and increases execution confidence.**
 
 ---
-
